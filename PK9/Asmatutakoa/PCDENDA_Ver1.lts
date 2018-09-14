@@ -1,0 +1,98 @@
+/*
+ * Azken Lanak - Asmatutako Praktika
+ * 		Hau informatikako denda bat da. Bertan ordenadoreak konpontzen dira.
+ *		Informatikaria konpontzez arduratzen da bere barruko lantokian.
+ *		Dendan 5 pertsona bakarrik sartzen dira eta ezin dira egon 3 ordenadore
+ *		baina gehiago konpontzen egon, denda txiki bat da eta ez dago 
+ *		denontzako lekua. 
+ *		Bertan informatikari bakarra dago eta berak atenditu eta konpondu
+ *		behar ditu, baino ezingo du barrura joan konpontzera jendea atenditzeko
+ *      badago. Barruan egoten da eta kanpora atera beharko du norbait
+ * 		sartzean, atenditzera. Ezingo ditu eskaketak hartu, barruan mahaia
+ *		beteta badago ere.
+ *		Ordenadoreak ateratzeko zinta bat erabiltzen du, bezeroak hartu
+ *		eta joan egiten dira, aurretik ordain dute eta, honek barruko mahaiaren
+ *		limite berdina du(5).
+ *		Nahi dugu pertsonak dendan sartzean eta ordenadore bat uztean kanpora
+ *		ateratzera eta gero itzultzera ikusteko dagoen, eta badago, eramatera.
+ *			  	
+ *		Hausnarketa:
+ *			- Inor sartu baino lehen informatikariak begiratzen badu ea norbait
+ *			  dagoen, informatikariak ezingo du konpondu ordenadoreak, ez bait 
+ *			  daude. Eta orduan blokeaketa bat gertatuko da segurtasun-propietate
+ *			  bat bortsatzen.
+ *			- Ordenadoreen limitea 5 da, norbait baten bat gehio sartu nahiko balu,
+ *			  ezingo luke ordenadorea eman, baino informatikaria mostradorera azal
+ *			  duko da eta hor geldituko da. Elkarblokeaketa bat gertatzen da,
+ *			  ordenadore bat jasotzeko mahaia libratu beharko da konponketa baten
+ *			  bidez, baino informatikariak ezingo du konpondu mostradorean dago
+ *			  eta.
+ *			- Ordenadore bat konpontzera joatean eta beste pertsonak ordenagailu
+ *			  konponduak ez badituzte zintatik hartzen, segurtasun-propietate bat
+ *			  bortsatzen da, ez dira zintan gehio sartzen, hau da, ezingo dira
+ *			  gehio konponduko zinta beterik badago.
+ *		    - Ezin dira aldagaiak erabili modeloan, adibidez eman den ordenadorea
+ *			  eta gero hartuko direnak ezin dira horrela jarri:
+ *							- (ordenadoreaEman[o:OR]->atera->PERTSONA)
+ *							- (ordenadoreaHartu[o]  ->atera->PERTSONA)
+ *			  If desberdinetan daude eta. Hau gero Java modeloan aldagai bat jasoko
+ *			  da bakoitzak bere ordenadorea hartzeko begiratuEgina egitean. Orain
+ *			  segurtasun-propietateak analizatzeko sarraila bat jarriko da bi pertsonek
+ *			  begira ez dezaten eginda dauden, segurtasun-propietate bat bortsatu dezake
+ *			  eta. (Ordenadore bakar bat eginda. Biek batera begiratu, gero biak hartu
+ *			  saiatu eta ezin bigarrenak.)
+ *			- Segurtasuna propietateak analizatzeko erabiltzen ari garen PERTSONA modeloa
+ *			  ez da lagungarria, ezin dugu aldagaiak gorde, hau da, ordenadorea konpontzera
+ *			  eraman baino lehen, "emanda.0" adarretik joan beharko zuen eta eraman da gero
+ *			  "eraman.1" adarretik. Orduan segurtasun eta bizitasun propietateak analizatzeko
+ *			  beste antzeko modelo bat erabiliko dugu, baina ez da bukaerakoaren berdina
+ *			  izango.
+ *			
+ * Egilea: Jon Led
+ * Data: 2018-01-10
+ */
+
+const PK 	= 5			// Pertsona kopurua
+range PR 	= 0..PK		// Pertsonen rangoa {0: inor, PK: Beteta}
+range PID	= 1..PK		// Pertsonen identifikadorea
+const OK	= 3			// Ordenadoreen kopurua
+range OID	= 1..OK		// Ordenadoreen IDa
+range OR	= 0..OK		// Ordenadoreen rangoa {0: inor, OK: Beteta}
+range Bool 	= 0..1		// Boolearra, bi aukera {0: Ez, 1: Bai}
+
+PERTSONA = (iritsi->emanda[emanda:Bool]->if (emanda == 0) then		// Eman gabe
+													(ordenadoreaEman->atera->PERTSONA)
+								 		 else
+													(begiratuEgina[eginda:Bool]->if(eginda == 0) then		// Egin gabe
+																						(				   atera->PERTSONA)
+																			   else
+																						(ordenadoreaHartu->atera->PERTSONA))).
+
+INFORMATIKARIA = (begiratu[pk:PR]->if(pk > 0) then
+													(mostradorera->ordenadoreaJaso->barruraJoan->INFORMATIKARIA)
+								   else
+													(ordenadoreaKonpondu					   ->INFORMATIKARIA)).
+
+
+// [pk:PR] Dendan dauden pertsona kopurua
+// [at:PR] Atendituta dagoen edo atenditu beharra duen (begiratzen baldin badago egina dagoen
+// [ok:OR] Ordenadoreak konpontzeko daudenak
+// [oe:OR] Ordenadoreak konponketa egina dutenak
+// [esk:Bool] Eskaera egiten dagoen hala ez
+// [k:Bool] Kanpoan (mostradorean) dagoen hala ez
+KONPONKETAK = KONPONKETAK[0][0][0][0][0][0],
+KONPONKETAK[pk:PR][at:PR][ok:OR][oe:OR][esk:Bool][k:Bool] =
+		( when(pk < PK)								p[PID].iritsi  				->KONPONKETAK[pk+1][ at ][ ok ][ oe ][esk][ k ]
+		| when(esk==0 && k==1 && ok<OK)				p[PID].ordenadoreaEman		->KONPONKETAK[ pk ][at+1][ ok ][ oe ][ 1 ][ k ]
+		| 											p[PID].begiratuEgina[oe>0]	->KONPONKETAK[ pk ][at+1][ ok ][ oe ][esk][ k ]
+		|											p[PID].ordenadoreaHartu		->KONPONKETAK[ pk ][ at ][ ok ][oe-1][esk][ k ]
+		|											p[PID].atera				->KONPONKETAK[pk-1][at-1][ ok ][ oe ][esk][ k ]
+		|											i.mostradorera				->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ 1 ]
+		| when (esk==1)								i.ordenadoreaJaso			->KONPONKETAK[ pk ][ at ][ok+1][ oe ][esk][ k ]
+		|											i.barruraJoan				->KONPONKETAK[ pk ][ at ][ ok ][ oe ][ 0 ][ 0 ]
+		| when (pk-at>=0)							i.begiratu[pk-at]			->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ k ]
+		| when (ok > 0)								i.ordenadoreaKonpondu		->KONPONKETAK[ pk ][ at ][ok-1][oe+1][esk][ k ]
+		).
+
+
+||INFORMATIKA_DENDA = (p[PID]:PERTSONA || i:INFORMATIKARIA || KONPONKETAK).

@@ -1,0 +1,97 @@
+/*
+ * Azken Lanak - Asmatutako Praktika
+ * 		Hau informatikako denda bat da. Bertan ordenadoreak konpontzen dira.
+ *		Informatikaria konpontzez arduratzen da bere barruko lantokian.
+ *		Dendan 5 pertsona bakarrik sartzen dira eta ezin dira egon 3 ordenadore
+ *		baina gehiago konpontzen egon, denda txiki bat da eta ez dago 
+ *		denontzako lekua. 
+ *		Bertan informatikari bakarra dago eta berak atenditu eta konpondu
+ *		behar ditu, baino ezingo du barrura joan konpontzera jendea atenditzeko
+ *      badago. Barruan egoten da eta kanpora atera beharko du norbait
+ * 		sartzean, atenditzera. Ezingo ditu eskaketak hartu, barruan mahaia
+ *		beteta badago ere.
+ *		Ordenadoreak ateratzeko zinta bat erabiltzen du, bezeroak hartu
+ *		eta joan egiten dira, aurretik ordain dute eta, honek barruko mahaiaren
+ *		limite berdina du(5).
+ *		Nahi dugu pertsonak dendan sartzean eta ordenadore bat uztean kanpora
+ *		ateratzera eta gero itzultzera ikusteko dagoen, eta badago, eramatera.
+ *
+ *		Aldaketak:
+ *			- Informatikaria norbait ez bada sartzen eta lanik ez badago, ezer
+ *			  ez egiten, edota "izarrei begira" (mirando a las musarañas) dago.
+ *			- Informatikari bat ez da mostradorera agertuko bere lan mahaia
+ *			  beteta badago.
+ *			- Orain informatikariak ezingo ditu ordenadore gehio konpondu zinta
+ *			  beterik badago.
+ *			- Sarraila bat jarriko da, bi pertsonek batera begira ez dezaten
+ *			  ea eginda dagoen ordenagailua.
+ *			- Pertsona modelo sinplifikatu bat jarri da, segurtasun eta bizitasun
+ *			  propietateen bortsaketaren analisia egiteko, modelu hontan ez da
+ *			  kanpora eta barrura sartzen bitartean, itxaroten gelditu baizik.
+ *			  	
+ *		Hausnarketa:
+ *			- Ez dira ez Segurtasun ez bizitasun propietateeik bortsatzen, gertatu
+ *		  	  ez ditzazkeen akzioak, ez dira akzio restriktiboak, adibidez, ez da
+ *			  txarra informatikaria ez edukitzea aukerarik izarrei begira gelditzeko,
+ *			  hori gauza ona da, esan nahi du lana ugari duela.
+ *			- Informatikariak orain ez ditu ordenadore gehio konponduko zinta beteta
+ *			  badago, baino bertan geratzen da geldik zinta libratu arte. Hobegoa
+ *			  izango zen informatikaria "ezer ez" egiten egoten bazen ez bazuen
+ *			  aukera ordenadore gehio konpontzeko.
+ *			
+ * Egilea: Jon Led
+ * Data: 2018-01-10
+ */
+
+const PK 	= 5			// Pertsona kopurua
+range PR 	= 0..PK		// Pertsonen rangoa {0: inor, PK: Beteta}
+range PID	= 1..PK		// Pertsonen identifikadorea
+const OK	= 3			// Ordenadoreen kopurua
+range OID	= 1..OK		// Ordenadoreen IDa
+range OR	= 0..OK		// Ordenadoreen rangoa {0: inor, OK: Beteta}
+range Bool 	= 0..1		// Boolearra, bi aukera {0: Ez, 1: Bai}
+
+//PERTSONA = (iritsi->emanda[emanda:Bool]->if (emanda == 0) then		// Eman gabe
+//													(ordenadoreaEman->atera->PERTSONA)
+//								 		 else
+//													(begiratuEgina[eginda:Bool]->if(eginda == 0) then		// Egin gabe
+//																						(				   askatu->atera->PERTSONA)
+//																			   else
+//																						(ordenadoreaHartu->askatu->atera->PERTSONA))).
+
+PERTSONA = (iritsi->ordenadoreaEman->ordenadoreaHartu->atera->PERTSONA).
+
+INFORMATIKARIA = (begiratu[pk:PR][ok:OR]->if(pk > 0 && ok<OK) then
+													(mostradorera->ordenadoreaJaso->barruraJoan->INFORMATIKARIA)
+								   		  else
+													if(ok > 0) then
+														(ordenadoreaKonpondu						->INFORMATIKARIA)
+													else
+														(izarreiBegira								->INFORMATIKARIA)).	
+
+
+// [pk:PR] Dendan dauden pertsona kopurua
+// [at:PR] Atendituta dagoen edo atenditu beharra duen (begiratzen baldin badago egina dagoen
+// [ok:OR] Ordenadoreak konpontzeko daudenak
+// [oe:OR] Ordenadoreak konponketa egina dutenak
+// [esk:Bool] Eskaera egiten dagoen hala ez
+// [k:Bool] Kanpoan (mostradorean) dagoen hala ez
+// [beg:Bool] Sarraila, bi 
+KONPONKETAK = KONPONKETAK[0][0][0][0][0][0][0],
+KONPONKETAK[pk:PR][at:PR][ok:OR][oe:OR][esk:Bool][k:Bool][beg:Bool] =
+		( when(pk < PK)								p[PID].iritsi  				->KONPONKETAK[pk+1][ at ][ ok ][ oe ][esk][ k ][beg]
+		| when(esk==0 && k==1 && ok<OK)				p[PID].ordenadoreaEman		->KONPONKETAK[ pk ][at+1][ ok ][ oe ][ 1 ][ k ][beg]
+	//  | when(beg==0)								p[PID].begiratuEgina[oe>0]	->KONPONKETAK[ pk ][at+1][ ok ][ oe ][esk][ k ][ 1 ]
+	//  |											p[PID].askatu				->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ k ][ 0 ]
+		| when(oe>0)								p[PID].ordenadoreaHartu		->KONPONKETAK[ pk ][ at ][ ok ][oe-1][esk][ k ][beg]
+		|											p[PID].atera				->KONPONKETAK[pk-1][at-1][ ok ][ oe ][esk][ k ][beg]
+		|											i.mostradorera				->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ 1 ][beg]
+		| when (esk==1)								i.ordenadoreaJaso			->KONPONKETAK[ pk ][ at ][ok+1][ oe ][esk][ k ][beg]
+		|											i.barruraJoan				->KONPONKETAK[ pk ][ at ][ ok ][ oe ][ 0 ][ 0 ][beg]
+		| when (pk-at>=0)							i.begiratu[pk-at][ok]		->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ k ][beg]
+		| when (ok > 0 && oe<OK)					i.ordenadoreaKonpondu		->KONPONKETAK[ pk ][ at ][ok-1][oe+1][esk][ k ][beg]
+		).
+
+
+||INFORMATIKA_DENDA = (p[PID]:PERTSONA || i:INFORMATIKARIA || KONPONKETAK).
+||INFORMATIKA_DENDA_PROP = INFORMATIKA_DENDA>>{p[PID].ordenadoreaEman}.

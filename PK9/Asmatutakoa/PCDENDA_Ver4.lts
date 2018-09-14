@@ -1,0 +1,88 @@
+/*
+ * Azken Lanak - Asmatutako Praktika
+ * 		Hau informatikako denda bat da. Bertan ordenadoreak konpontzen dira.
+ *		Informatikaria konpontzez arduratzen da bere barruko lantokian.
+ *		Dendan 5 pertsona bakarrik sartzen dira eta ezin dira egon 3 ordenadore
+ *		baina gehiago konpontzen egon, denda txiki bat da eta ez dago 
+ *		denontzako lekua. 
+ *		Bertan informatikari bakarra dago eta berak atenditu eta konpondu
+ *		behar ditu, baino ezingo du barrura joan konpontzera jendea atenditzeko
+ *      badago. Barruan egoten da eta kanpora atera beharko du norbait
+ * 		sartzean, atenditzera. Ezingo ditu eskaketak hartu, barruan mahaia
+ *		beteta badago ere.
+ *		Ordenadoreak ateratzeko zinta bat erabiltzen du, bezeroak hartu
+ *		eta joan egiten dira, aurretik ordain dute eta, honek barruko mahaiaren
+ *		limite berdina du(5).
+ *		Nahi dugu pertsonak dendan sartzean eta ordenadore bat uztean kanpora
+ *		ateratzera eta gero itzultzera ikusteko dagoen, eta badago, eramatera.
+ *
+ *		Aldaketak:
+ *			- Pertsonak orain iristen danean jakingo du emanda duen hala ez,
+ *			  eta "begiratuEgina" ez da atendituta bezela ulertuko, ez du behar
+ *			  eta atendituta egotea. "atera" ere emanda badu, ez du atenditutako
+ *			  pertsonak jeitsi behar, bakarrik atenditua izan danean (ordenadorea
+ *			  eman badu).
+ *			  	
+ *		Hausnarketa:
+ *			- Pertsona modelo honekin kontuan eduki behar da segurtasun-propieta
+ *			  teak bortsatzen direla, normala da, ordenadore bat hartzen badu, 
+ *			  emanda ez dagoenean, honek Java-n funtzionatuko du.
+ *			
+ * Egilea: Jon Led
+ * Data: 2018-01-10
+ */
+
+const PK 	= 5			// Pertsona kopurua
+range PR 	= 0..PK		// Pertsonen rangoa {0: inor, PK: Beteta}
+range PID	= 1..PK		// Pertsonen identifikadorea
+const OK	= 3			// Ordenadoreen kopurua
+range OID	= 1..OK		// Ordenadoreen IDa
+range OR	= 0..OK		// Ordenadoreen rangoa {0: inor, OK: Beteta}
+range Bool 	= 0..1		// Boolearra, bi aukera {0: Ez, 1: Bai}
+
+PERTSONA = (iritsi[emanda:Bool]->if (emanda == 0) then		// Eman gabe
+											(ordenadoreaEman->atera->PERTSONA)
+								 else
+											(begiratuEgina[eginda:Bool]->if(eginda == 0) then		// Egin gabe
+																				(				   askatu->atera->PERTSONA)
+																	    else
+																				(ordenadoreaHartu->askatu->atera->PERTSONA))).
+
+INFORMATIKARIA = (begiratu[pk:PR][ok:OR][oe:OR]->if(pk > 0 && ok<OK) then
+													(mostradorera->ordenadoreaJaso->barruraJoan->INFORMATIKARIA)
+								   		  else
+													if(ok > 0 && oe<OK) then
+														(ordenadoreaKonpondu						->INFORMATIKARIA)
+													else
+														(izarreiBegira								->INFORMATIKARIA)).	
+
+
+// [pk:PR] Dendan dauden pertsona kopurua
+// [at:PR] Atendituta dagoen edo atenditu beharra duen (begiratzen baldin badago egina dagoen
+// [ok:OR] Ordenadoreak konpontzeko daudenak
+// [oe:OR] Ordenadoreak konponketa egina dutenak
+// [esk:Bool] Eskaera egiten dagoen hala ez
+// [k:Bool] Kanpoan (mostradorean) dagoen hala ez
+// [beg:Bool] Sarraila, bi pertsonak batera begira ez dezaten
+KONPONKETAK = KONPONKETAK[0][0][0][0][0][0][0],
+KONPONKETAK[pk:PR][at:PR][ok:OR][oe:OR][esk:Bool][k:Bool][beg:Bool] =
+		( when(pk < PK)								p[PID].iritsi[i:Bool]  		->	if (i==0) then	
+																						KONPONKETAK[pk+1][ at ][ ok ][ oe ][esk][ k ][beg]
+																					else
+																						KONPONKETAK[pk+1][at+1][ ok ][ oe ][esk][ k ][beg]
+		| when(esk==0 && k==1 && ok<OK)				p[PID].ordenadoreaEman			  ->KONPONKETAK[ pk ][at+1][ ok ][ oe ][ 1 ][ k ][beg]
+		| when(beg==0)								p[PID].begiratuEgina[oe>0]		  ->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ k ][ 1 ]
+		|											p[PID].askatu					  ->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ k ][ 0 ]
+		| when(oe>0)								p[PID].ordenadoreaHartu			  ->KONPONKETAK[ pk ][ at ][ ok ][oe-1][esk][ k ][beg]
+		|											p[PID].atera					  ->KONPONKETAK[pk-1][at-1][ ok ][ oe ][esk][ k ][beg]
+		|											i.mostradorera					  ->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ 1 ][beg]
+		| when (esk==1)								i.ordenadoreaJaso				  ->KONPONKETAK[ pk ][ at ][ok+1][ oe ][esk][ k ][beg]
+		|											i.barruraJoan					  ->KONPONKETAK[ pk ][ at ][ ok ][ oe ][ 0 ][ 0 ][beg]
+		| when (pk-at>=0)							i.begiratu[pk-at][ok][oe]		  ->KONPONKETAK[ pk ][ at ][ ok ][ oe ][esk][ k ][beg]
+		| when (ok > 0 && oe<OK)					i.ordenadoreaKonpondu			  ->KONPONKETAK[ pk ][ at ][ok-1][oe+1][esk][ k ][beg]
+		).
+
+
+||INFORMATIKA_DENDA = (p[PID]:PERTSONA || i:INFORMATIKARIA || KONPONKETAK).
+||INFORMATIKA_DENDA_PROP = INFORMATIKA_DENDA>>{p[PID].ordenadoreaEman}.
+||INFORMATIKA_DENDA_PROP2 = INFORMATIKA_DENDA<<{p[PID].begiratuEgina[Bool]}.

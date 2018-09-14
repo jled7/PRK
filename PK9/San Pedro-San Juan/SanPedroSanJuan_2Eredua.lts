@@ -1,0 +1,81 @@
+/*
+ * Azken Lanak - San Pedro San Juan Ariketa 2ºEredua
+ * 		Pasaian badago txalupa bat San Pedro eta San Juan komunikatzeko.
+ *		Alde batetik bestera pasatzeko beharrezkoa da txalupa beteta egotea,
+ *		edo beste aldean txalupa betetzeko nahiko jende zain egotea. 
+ *		Enbarkaderoan soilik txalupa bat betetzeko behar den jendea sartzen da.
+ *
+ *		Modelatu FSPz, aurreko atalean sortzen den elkar-blokeaketa soluzionatuz
+ *		eta ahalik eta gutxien aldatuz. Check Safety erabiliz, ziurtatu konpondu
+ *		dela arazoa.
+ *		Bizitasun propietateak aztertu (FSP lehentasunak idatziz eta Check 
+ *		Progress erabiliz) eta ematen denari buruzko hausnarketa idatzi.
+ *
+ *		Aldaketak:
+ *			- Jendea iristean alde batera, jeistean ez dira enbarkadero horko
+ *			  balioetara gehitzen, bertan jeitsiko balira bezela baina beste
+ *			  alde batetik, kanpora ateratzeko intentzioarekin. Gero berriz sartu
+ *			  nahiko balute, iritsi daitezke enbarkaderora berriz. Honek lehenengo
+ *			  ereduan, hitz egindako segurtasun propietatearen bortsaketa saihesten
+ *			  dugu.
+ *			- Jendea beste enbarkaderoan itxaroten baldin badago, eta bertan ez dago
+ *			  inor edo betetzeko nahikoa ez, txalupa gosez hiltzen da bertan. Aurreko
+ *			  ereduan esaten genuen bezela jende dexente baldin badago (beste txalupa
+ *			  eta enbarkaderoa betetzeko aina) gertatzen da. Horretarako, ez bada
+ *			  txalupa betetzen baino beste aldean ba ahal dago betetzeko aina pertsona
+ *			  bertara joango da.
+ *
+ *		Hausnarketa:
+ *			- Denbora guztian jendea iristen egoten bada enbarkaderoko bi aldetara,
+ *			  baino adibidez txalupa batekoak ez badira igotzen inoiz, txalupa denbora
+ *			  guztian alde batetik bestera ibiliko da, pertsona bakar bat eramaten, beste 
+ *			  aldean jendea itxaroten ikusten bait du. Eta gero itzuli eta berdina egin,
+ *			  beste aldean ez bait da inor igotzen. Honek bizitasun propietatea bortsatzen
+ *			  du. Hau konpontzeko bakarrik uztea egongo zen txalupa bestea aldera joatea
+ *			  jendea dagoenean, baino gure aldean inor ez badago itxaroten.
+ *			  	
+ *
+ * Egilea: Jon Led
+ * Data: 2017-12-30
+ */
+
+const PK 	= 6			// Pertsona kopurua
+range PR 	= 0..PK		// Pertsonen rangoa
+range PID	= 1..PK		// Pertsonen identifikadorea
+const TK 	= 3			// Txalupan sartzen diren pertsona kopurua
+range TR 	= 0.. TK	// Txalupan sartzen diren pertsonen rangoa {0: inor txalupan, TK: Txalupa betea}
+const PoK	= TK		// Portuan sartzen diren pertsona kopurua (Enbarkaderoan soilik txalupa bat betetzeko behar den jendea sartzen da)
+range PoR	= 0..PoK	// Portuan sartzen diren pertsonen rangoa {0: inor portuan, PoK: Portua betea}
+range TP 	= 0..1		// Txaluparen posizioa {0: SanPedro, 1: San Juan}
+range Bool  = 0..1		// Jakiteko ea jendea jeisten dagoen ala ez, denok jeisteko iristean {0: Denak jeitsi dira, 1: Ez dira jeitsi denak}
+
+PERTSONA = (iritsiSP->sartuSP->jeitsiSJ->PERTSONA
+		   |iritsiSJ->sartuSJ->jeitsiSP->PERTSONA).
+
+TXALUPA = (ateraSP->zeharkatu->iritsiSJ->ateraSJ->zeharkatu->iritsiSP->TXALUPA).
+
+// [tx:TR]  Zenbat pertsona dauden txalupan sartua
+// [sp:PoR] Zenbat pertsona dauden SanPedroko portuan {0: inor portuan, PoK: Portua betea}
+// [sj:PoR] Zenbat pertsona dauden SanJuaneko portuan {0: inor portuan, PoK: Portua betea}
+// [tp:TP]  Txaluparen posizioa, non dagoen jakiteko {0: SanPedro, 1: San Juan}
+// [pj:Bool] Ea jendea jeitsi den jakiteko {0: Denak jeitsi dira, 1: Ez dira jeitsi denak}
+PORTUA = PORTUA[0][0][0][0][0],
+PORTUA[tx:TR][sp:PoR][sj:PoR][tp:TP][pj:Bool] = 
+				( when(sp < PoK)						p[PID].iritsiSP						  ->PORTUA[ tx ][sp+1][ sj ][ tp][pj]
+				| when(tx < TK && tp==0 && pj == 0)		p[PID].sartuSP 						  ->PORTUA[tx+1][sp-1][ sj ][ tp][pj]
+				| when(tx > 0 && tp==1)					p[PID].jeitsiSJ		-> if(tx == 1) then	PORTUA[tx-1][ sp ][ sj ][ tp][ 0]
+																			   else 			PORTUA[tx-1][ sp ][ sj ][ tp][ 1]
+				| when(sj < PoK)						p[PID].iritsiSJ						  ->PORTUA[ tx ][ sp ][sj+1][ tp][pj]
+				| when(tx < TK && tp==1 && pj == 0)		p[PID].sartuSJ 						  ->PORTUA[tx+1][ sp ][sj-1][ tp][pj]
+				| when(tx > 0 && tp==0)					p[PID].jeitsiSP		-> if(tx == 1) then	PORTUA[tx-1][ sp ][ sj ][ tp][ 0]
+																			   else 			PORTUA[tx-1][ sp ][ sj ][ tp][ 1]
+				| when((tx==TK || sj==PoK) && tp==0 && pj == 0)	t.ateraSP					  ->PORTUA[ tx ][ sp ][ sj ][ tp][ 1]
+				| when((tx==TK || sp==PoK) && tp==1 && pj == 0)	t.ateraSJ					  ->PORTUA[ tx ][ sp ][ sj ][ tp][ 1]
+				| 												t.iritsiSP	-> if(tx == 0) then	PORTUA[ tx ][ sp ][ sj ][ 0 ][ 0]
+																						   else PORTUA[ tx ][ sp ][ sj ][ 0 ][ 1]
+				| 												t.iritsiSJ	-> if(tx == 0) then	PORTUA[ tx ][ sp ][ sj ][ 1 ][ 0]
+																						   else PORTUA[ tx ][ sp ][ sj ][ 1 ][ 1]
+				).
+
+||SanPedroSanJuan = (p[PID]:PERTSONA || t:TXALUPA || PORTUA).
+||SanPedroSanJuan_PROP = SanPedroSanJuan>>{p[PID].sartuSP}.
