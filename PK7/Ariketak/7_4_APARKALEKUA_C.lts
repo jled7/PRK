@@ -1,0 +1,60 @@
+/*
+ * PK7.pdf Ariketak
+ * 		3 kotxe eta 5 moto erabiltzen duten aparkaleku 
+ *		batean 10 plaza daude. Moto batek plaza bat okupatzen
+ *		du eta kotxe batek hiru plaza. Aparkalekura sartzeko
+ *		eta ateratzeko pasabide txiki bat dago. Pasabide 
+ *		horretan kotxe bakar bat egon daiteke edo bi moto 
+ *		edozein norabidean. Pasabidean sartzean ibilgailuek
+ *		ez dakite aparkalekuan plazarik dagoen edo ez.
+ *
+ *		Aldaketak:
+ *			- Pasabidean aparkatzeko sartzen direnen kontadore bat jarri
+ *			  da, inor gehio aparkatzera ez sartzeko pasabidean, dagoenak
+ *		 	  lekua betetzen badu. Hauek motoentzako bakarrik funtzionatzen
+ *			  du, kotxea pasabidera sartzean ez bait da inor gehio sartzen
+ *			  berarekin.
+ *			- Denbora guztian motoak sartzen eta ateratzen ez egoteko kotxeak
+ *			  itxaroten daudenean (ezingo dute sartu, pasabidea beti okupatuta)
+ *			  kotxeak itxaroten baldin badaude ezingo dute sartu motoak.
+ *
+ *		Hausnarketa:
+ *			- Ez dira ez Segurtasun ez Bizitasun propietateak bortsatzen egin
+ *			  diren aldaketen ondoren.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-12-03
+ */
+
+const KK 	= 3 	// Kotxe kopurua
+range KR	= 0..KK	// Kotxeen rangoa
+range KID	= 1..KK	// Kotxeen identifikadorea
+const MK 	= 5		// Moto kopurua
+range MID	= 1..MK	// Motoen identifikadorea
+const AK	= 10	// Aparkaleku kopurua
+range AR	= 0..AK	// Aparkalekuen rangoa
+const PK	= 2		// Pasabidean egon daitezkeenen kopurua
+range PR	= 0..PK	// Pasabidean egon daitezkeenen rangoa
+
+IBILGAILUA = (iritsi->pasabideraSartuKanpotik->aparkatu->pasabideraSartuBarrutik->joan->IBILGAILUA).
+
+// [pl:AR] Zenbat Plaza dauden beteta
+// [pa:PR] Zenbat elementuekin dagoen pasabide
+// [ps:PR] Pasabidean sartuta aparkatzeko daudenak (motoekin erabiliko ditugu kotxeak daudenean ezin du inor gehio sartu eta)
+// [ki:KR] Kotxeak itxaroten baldin badaude kanpoan
+APARKALEKUA = APARKALEKUA[0][0][0][0],
+APARKALEKUA[pl:AR][pa:PR][ps:PR][ki:KR] = 
+	(									kotxe[KID].iritsi					->APARKALEKUA[ pl ][ pa ][ ps ][ki+1]
+	|when (pa==0 && pl+3<=AK)			kotxe[KID].pasabideraSartuKanpotik 	->APARKALEKUA[ pl ][ 2  ][ ps ][ki-1]
+	|when (pl<=AK-3)					kotxe[KID].aparkatu		   			->APARKALEKUA[pl+3][pa-2][ ps ][ ki ]
+	|when (pa==0)						kotxe[KID].pasabideraSartuBarrutik 	->APARKALEKUA[pl-3][ 2  ][ ps ][ ki ]
+	|									kotxe[KID].joan					 	->APARKALEKUA[ pl ][pa-2][ ps ][ ki ]
+	|when (pa<2 && pl+ps<AK && ki==0)	motoa[MID].pasabideraSartuKanpotik 	->APARKALEKUA[ pl ][pa+1][ps+1][ ki ]
+	|when (pl<=AK-1)					motoa[MID].aparkatu		   			->APARKALEKUA[pl+1][pa-1][ps-1][ ki ]
+	|when (pa<2)						motoa[MID].pasabideraSartuBarrutik 	->APARKALEKUA[pl-1][pa+1][ ps ][ ki ]
+	|									motoa[MID].joan						->APARKALEKUA[ pl ][pa-1][ ps ][ ki ]
+	//|								[pl][pa]							->APARKALEKUA[ pl ][ pa ]
+	).
+
+||APARKALEKUAA = (kotxe[KID]:IBILGAILUA || motoa[MID]:IBILGAILUA || APARKALEKUA).
+||APARKALEKUAA_PROP = APARKALEKUAA<<{{kotxe[KID],motoa[MID]}.iritsi, {kotxe[KID],motoa[MID]}.pasabideraSartuKanpotik, {kotxe[KID],motoa[MID]}.pasabideraSartuBarrutik}.

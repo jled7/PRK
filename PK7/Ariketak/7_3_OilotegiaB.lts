@@ -1,0 +1,69 @@
+/*
+ * PK7.pdf Ariketak
+ * 		Josemiren oiloek oilategian jartzen dituzte arraultzak,
+ *		baina soilik sartzen dira bertara Josemi barruan ez badago.
+ *		Josemi oilategian sartzen da oilorik ez badago, bi arraultz
+ *		hartzen ditu eta ondoren ateratzen da.
+ *
+ *		Aldaketak:
+ *			- Josemik begiratu egiten du sartu ondoren ea hartzea dauken
+ *			  bestela atera egingo da.
+ *			- Oiloek begiratu egiten dute sartu ondoren ea jartzea dauketen
+ *			  arrautzarik, bestela atera egiten dira.
+ *			- Oiloek batera begira ez dezaten sarraila bat jarri da, hau
+ *			  arrautza jarri ondoren (edo jartzea lortzen ez badute ere)
+ *			  askatu egiten dute.
+ *			- Kontadore bat jarri da oiloen kopuruaren berdina, non maximora
+ *			  iristean, Josemik sartu sartu behar den (edo sartzeko aukera duen)
+ *
+ *		Hausnarketa:
+ *			- Segurtasun propietatea ez bortsatzeko, Josemi sartzean begiratu
+ *			  egiten du ea arrautzik dagoen barruan, bi baino gutxigo badaude
+ *			  atera dezake.
+ *			- Beste segurtasun propietate bat ez bortsatzeko oiloek sartzean
+ *			  begiratu egiten dute ea arrautz topera iritsi den, eta hala bada
+ *			  ateratzeko aukera dute.
+ *			- Bizitasun propietate bat ez bortsatzeko, kontadore bat erabili da,
+ *			  aukera guztientzako aukera egoteko. 
+ *
+ * Egilea: Jon Led
+ * Data: 2017-11-30
+ */
+
+const OK 	= 3			// Oiloen kopurua
+range OR 	= 0..OK		// Oiloen rangoa
+range OID	= 1..OK		// Oiloen identifikadorea
+const AK 	= 5			// Arrautz kopuru maximoa
+range AR 	= 0..AK		// Arrautzen rangoa
+range Bool	= 0..1		// Ea josemi barruan dagoen ala ez {0: Josemi kanpoan, 1: Josemi barruan}
+						// Edo Sarraila bezela bi oiloek batera begira eta jarri ez dezaten
+const KontM = 10
+range Kont	= 0..KontM
+
+JOSEMI 	= (sartu->begiratu[a:AR] ->if (a>=2) then (hartu->atera->JOSEMI)
+									  		 else (atera->JOSEMI)).
+
+OILOA   = (sartu->begiratu[a:AR] -> if(a<AK) then (jarri->askatu->atera->OILOA)
+											 else (askatu->atera->OILOA)).
+
+
+// [a:AR]	 Arrautza kopurua {0: Batez, AK: Beteta}
+// [o:OR]	 Oilo kopurua {0: Batez, OK: Beteta}
+// [j:Bool]	 Josemi barruan dagoen ala ez
+// [b:Bool]  Sarraila bi oiloek batera begira eta jarri ez dezaten
+// [k:Kont]	 Kontagailua, maximora iristean bakarrik josemi sartzea edukiko du
+OILOTEGIA = OILOTEGIA[0][0][0][0][0],
+OILOTEGIA[a:AR][o:OR][j:Bool][b:Bool][k:Kont] =
+								(when (j==0 && k<KontM)	oilo[OID].sartu		 ->OILOTEGIA[ a ][o+1][ j ][ b ][k+1]
+								|when (b==0)			oilo[OID].begiratu[a]->OILOTEGIA[ a ][ o ][ j ][ 1 ][ k ]
+								|						oilo[OID].jarri		 ->OILOTEGIA[a+1][ o ][ j ][ b ][ k ]
+								|						oilo[OID].askatu 	 ->OILOTEGIA[ a ][ o ][ j ][ 0 ][ k ]
+								|						oilo[OID].atera		 ->OILOTEGIA[ a ][o-1][ j ][ b ][ k ]
+								|when(j==0 && o==0)		josemi.sartu		 ->OILOTEGIA[ a ][ o ][ 1 ][ b ][ 0 ]
+								|						josemi.begiratu[a]	 ->OILOTEGIA[ a ][ o ][ 1 ][ b ][ k ]
+								|						josemi.hartu		 ->OILOTEGIA[a-2][ o ][ 1 ][ b ][ k ]
+								|						josemi.atera		 ->OILOTEGIA[ a ][ o ][ 0 ][ b ][ k ]
+								).
+
+||OILOTEGI = (josemi:JOSEMI || oilo[OID]:OILOA || OILOTEGIA).
+||OILOTEGI_PROP = OILOTEGI<<{oilo[OID].sartu}.

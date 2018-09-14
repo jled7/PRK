@@ -1,0 +1,59 @@
+/*
+ * PK7.pdf Ariketak
+ * 		Zoologiko bateko lehoien jangelan janaria agortzen
+ *		denean langile bat sartzen da 10 haragi puska botatzera.
+ *		Langilearen bizitza arriskuan ez jartzeko, soilik sartzen
+ *		da jangelaren barruan lehoirik ez badago. Gainera langilea
+ *		barruan dagoenean lehoiak sartzeko atea ixten da. Lehoiak
+ *		jangelan sartzean ez dakite barruan janaririk dagoen ala 
+ *		ez, eta ez dira bertatik ateratzen puska bat jan arte.
+ *
+ *		Aldaketak:
+ *			- Orain lehoiak sartzen dira bakarrik janaria badago eta
+ *			  ez badute haragi zatirik sobran (asko sartu dira eta 
+ *			  bakarra gelditzen den) atera egiten dira.
+ *			- Lehoiak (banaka) begiratu egiten dute ea zatirik badagoen,
+ *			  ez badago atera egiten dira (askatu ondoren).
+ *
+ *		Hausnarketa:
+ *			- Segurtasun propietatea ez bortsatzeko lehoiak sartzen, orain
+ *			  atera daitezke haragi zatirik ez badago.
+ *			- Bizitasun propietatea ez bortsatzeko (lehoiak sartzen ari dira
+ *			  denbora guztian eta langileak ezin du sartu) lehoiak ez dira
+ *			  sartuko janaria ez dagoenean.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-12-03
+ */
+
+const HK	= 10	// Haragi puska kopuru maximoa
+range HR	= 0..HK	// Haragi pusken rangoa
+const LK 	= 3		// Lehoi kopurua
+range LR 	= 0..LK	// Lehoien rangoa
+range LID	= 1..LK	// Lehoien identifikadorea
+range Bool  = 0..1	// Atea itxia dagoen ala ez
+
+
+LANGILEA = (sartu->janariaBota->atera->LANGILEA).
+
+LEHOIA = (sartu->begiratu[a:HR]->if(a>0) then (jan->askatu->atera->LEHOIA)
+										 else (askatu     ->atera->LEHOIA)).
+
+// [l:LR]: Barruan dauden lehoi kopurua
+// [h:HR]: Barruan dauen haragi pusken kopurua
+// [a:Bool]: Lehoiak sartzeko atea itxia dagoen ala ez
+// [b:Bool]: Sarraila, bi lehoiak batera begira ez dezateen
+JANGELA = JANGELA[0][0][0][0],
+JANGELA[l:LR][h:HR][a:Bool][b:Bool] =
+		(when (h==0 && l==0) langilea.sartu		 	->JANGELA[ 0 ][ 0 ][ 1 ][ b ]
+		|					 langilea.janariaBota	->JANGELA[ l ][ HK][ 1 ][ b ]
+		|					 langilea.atera		 	->JANGELA[ l ][ h ][ 0 ][ b ]
+		|when(a==0 && h>0)	 lehoia[LID].sartu	 	->JANGELA[l+1][ h ][ a ][ b ]
+		|when(b==0)			 lehoia[LID].begiratu[h]->JANGELA[ l ][ h ][ a ][ 1 ]
+		|					 lehoia[LID].jan	 	->JANGELA[ l ][h-1][ a ][ b ]
+		|					 lehoia[LID].askatu		->JANGELA[ l ][ h ][ a ][ 0 ]
+		|					 lehoia[LID].atera	 	->JANGELA[l-1][ h ][ a ][ b ]
+		).
+
+||ZOOLOGIKOA = (langilea:LANGILEA || lehoia[LID]:LEHOIA || JANGELA).
+||ZOOLOGIKOA_PROP = ZOOLOGIKOA<<{lehoia[LID].sartu}.

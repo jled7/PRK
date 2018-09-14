@@ -1,0 +1,32 @@
+/*
+ * PK7.pdf Adibidea
+ * Irakurleak/Idazleak - Idazlearen lehentasuna
+ *
+ * Data: 2017-11-27
+ */
+
+IRAKURLE = 		 (eskIrak-> aztertu-> askIrak->IRAKURLE).
+IDAZLE  = (eskatu->eskIdaz-> aldatu-> askIdaz->IDAZLE).
+
+const False = 0
+const True 	= 1
+range Bool 	= False..True
+const Kirak = 2 			// Irakurle kopuru maximoa
+const Kidaz	= 2 			// Idazle kopuru maximoa
+
+
+II_BLOKEOA = II[0][False][0],
+II[irak:0..Kirak][idazten:Bool][zai:0..Kidaz] =
+		(when (!idazten && zai==0)	irak[1..Kirak].eskIrak->II[irak+1][idazten][ zai ]
+		|							irak[1..Kirak].askIrak->II[irak-1][idazten][ zai ]
+		|when (irak==0 && !idazten) idaz[1..Kidaz].eskIdaz->II[ irak ] [ True ][zai-1]
+		|							idaz[1..Kidaz].askIdaz->II[ irak ][ False ][ zai ]
+		|							idaz[1..Kidaz].eskatu ->II[ irak ][idazten][zai+1]
+		).
+
+||IRAKURLEAK_IDAZLEAK = (irak[1..Kirak]:IRAKURLE
+					  || idaz[1..Kidaz]:IDAZLE || II_BLOKEOA).
+
+||II_AURRERAPENA = IRAKURLEAK_IDAZLEAK
+						>>{irak[1..Kirak].askIrak,
+							idaz[1..Kirak].askIdaz}.

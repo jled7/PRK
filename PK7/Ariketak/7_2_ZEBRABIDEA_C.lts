@@ -1,0 +1,51 @@
+/*
+ * PK7.pdf Ariketak
+ * 		Zebrabide batetara iristean:
+ *			- Kotxeak zain geldituko dira oinezkoren bat pasatzen 
+ *			  edo pasatzeko zain baldin badago.
+ *			- Oinezkoek, ordea, zain geldituko dira une horretan 
+ *			  kotxe bat pasatzen ari bada, harrapatuak ez izateko.
+ *		Gainera ataskorik sor ez dadin, hiru kotxe baino gehiago zain
+ *		badaude, oinezkoek ere itxarongo dute.
+ *
+ *		Hausnarketa:
+ *			Oraingo hontan, txandak erabili dira, bizitasun propietateak
+ *			ez bortsatzeko.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-11-29
+ */
+
+const KK 	= 5		// Kotxe kopurua
+range KR 	= 0..KK	// Kotxeen rangoa
+const OK 	= 3		// Oinezkoen kopurua
+range OR 	= 0..OK	// Oinezkoen rangoa
+range OID	= 1..OK	// Oinezkoa identifikadorea
+range KID	= 1..KK	// Kotxeen identifikadorea
+range Bool	= 0..1	// Zeinen txanda den {0: Kotxeak, 1:Oinezkoak}
+
+
+OINEZKOA = (iritxi->sartu->atera->OINEZKOA).
+
+KOTXEA = (iritxi->sartu->atera->KOTXEA).
+
+// ki: Itxoiten dauden kotxe kopurua
+// kz: Zebrabidea pasatzen dauden kotxe kopurua
+// oi: Itxoiten dauden oinezkoen kopurua
+// oz: Zebrabidea pasatzen dauden oinezko kopurua
+// tx: Zeinen txanda den {0: Kotxeak, 1:Oinezkoak}
+ZEBRABIDEA = ZEBRABIDEA[0][0][0][0][0],
+ZEBRABIDEA[ki:KR][kz:KR][oi:OR][oz:OR][tx:Bool] =
+			(						 							oinezkoa[OID].iritxi->				  ZEBRABIDEA[ ki ][ kz ][oi+1][ oz ][ tx ]
+			|when((kz == 0 && ki < 3) || (kz==0 && tx==1)) 		oinezkoa[OID].sartu ->if(ki >=3) then ZEBRABIDEA[ ki ][ kz ][oi-1][oz+1][ 0  ]
+																							 	 else ZEBRABIDEA[ ki ][ kz ][oi-1][oz+1][ tx ]
+			|						 							oinezkoa[OID].atera ->				  ZEBRABIDEA[ ki ][ kz ][ oi ][oz-1][ tx ]
+			|						 							kotxea[KID].iritxi  ->				  ZEBRABIDEA[ki+1][ kz ][ oi ][ oz ][ tx ]
+			|when(oz == 0 && (oi == 0 || (ki >= 3 && tx==0)))	kotxea[KID].sartu   ->if(ki >=3) then ZEBRABIDEA[ki-1][kz+1][ oi ][ oz ][ 1  ]
+																								 else ZEBRABIDEA[ki-1][kz+1][ oi ][ oz ][ tx ]
+			|						 							kotxea[KID].atera	->				  ZEBRABIDEA[ ki ][kz-1][ oi ][ oz ][ tx ]
+			).
+
+||ZEBRABIDEAA = (kotxea[KID]:KOTXEA || oinezkoa[OID]:OINEZKOA || ZEBRABIDEA).
+
+||ZEBRABIDEAA_BETETA = (ZEBRABIDEAA)<<{kotxea[KID].iritxi,oinezkoa[OID].iritxi}.

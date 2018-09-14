@@ -1,0 +1,29 @@
+/*
+ * PK7.pdf Adibidea
+ * Irakurleak - Idazleak eredua
+ *
+ * Data: 2017-11-27
+ */
+
+IRAKURLE = (eskIrak-> aztertu-> askIrak->IRAKURLE).
+IDAZLE	 = (eskIdaz-> aldatu -> askIdaz->IDAZLE).
+
+const False = 0
+const True 	= 1
+range Bool 	= False..True
+const Kirak = 2 			// Irakurle kopuru maximoa
+const Kidaz	= 2 			// Idazle kopuru maximoa
+
+
+II_BLOKEOA = II[0][False],
+II[irak:0..Kirak][idazten:Bool] =
+		(when (!idazten)			irak[1..Kirak].eskIrak->II[irak+1][idazten]
+		|							irak[1..Kirak].askIrak->II[irak-1][idazten]
+		|when (irak==0 && !idazten) idaz[1..Kidaz].eskIdaz->II[ irak ] [ True ]
+		|							idaz[1..Kidaz].askIdaz->II[ irak ][ False ]
+		).
+
+||IRAKURLEAK_IDAZLEAK = (irak[1..Kirak]:IRAKURLE
+					  || idaz[1..Kidaz]:IDAZLE || II_BLOKEOA).
+
+

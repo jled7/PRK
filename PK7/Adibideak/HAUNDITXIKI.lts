@@ -1,0 +1,13 @@
+/*
+ * PK7.pdf Adibidea
+ * Aurrerapena – ekintzen lehentasuna
+ *
+ * Data: 2017-11-27
+ */
+
+NORMAL =(lan->jolastu->NORMAL
+		| lo->jolastu->NORMAL).
+
+||HANDI =(NORMAL)<<{lan}.
+
+||TXIKI =(NORMAL)>>{lan}.

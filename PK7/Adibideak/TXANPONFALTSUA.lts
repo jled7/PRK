@@ -1,0 +1,12 @@
+/*
+ * PK7.pdf Adibidea
+ * Aurrerapen-propietateak – bidezko aukera
+ *
+ * Data: 2017-11-27
+ */
+
+BITXANPON = ( aukeratu->TXANPON
+			| aukeratu->FALTSUA ),
+FALTSUA   = ( bota->leon->FALTSUA ),
+TXANPON	  = ( bota->leon->TXANPON
+			| bota->kast->TXANPON ).

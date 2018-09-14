@@ -1,0 +1,46 @@
+/*
+ * PK7.pdf Ariketak
+ * 		Zebrabide batetara iristean:
+ *			- Kotxeak zain geldituko dira oinezkoren bat pasatzen 
+ *			  edo pasatzeko zain baldin badago.
+ *			- Oinezkoek, ordea, zain geldituko dira une horretan 
+ *			  kotxe bat pasatzen ari bada, harrapatuak ez izateko.
+ *		Gainera ataskorik sor ez dadin, hiru kotxe baino gehiago zain
+ *		badaude, oinezkoek ere itxarongo dute.
+ *
+ *		Hausnarketa:
+ *			Oinezkoak dauden bitartean kotxeak ez dira pasako, hori bai,
+ *			oinezkoak 3 kotxe baino gehiago badaude geldik geratuko dira,
+ *			baina honek ez du esan nahi kotxeak pasako direnik, interblokeo
+ *			hori zuzendu egin behar da.
+ * Egilea: Jon Led
+ * Data: 2017-11-29
+ */
+
+const KK = 5		// Kotxe kopurua
+range KR = 0..KK	// Kotxeen rangoa
+const OK = 3		// Oinezkoen kopurua
+range OR = 0..OK	// Oinezkoen rangoa
+range OID= 1..OK	// Oinezkoa identifikadorea
+range KID= 1..KK	// Kotxeen identifikadorea
+
+
+OINEZKOA = (iritxi->sartu->atera->OINEZKOA).
+
+KOTXEA = (iritxi->sartu->atera->KOTXEA).
+
+// ki: Itxoiten dauden kotxe kopurua
+// kz: Zebrabidea pasatzen dauden kotxe kopurua
+// oi: Itxoiten dauden oinezkoen kopurua
+// oz: Zebrabidea pasatzen dauden oinezko kopurua
+ZEBRABIDEA = ZEBRABIDEA[0][0][0][0],
+ZEBRABIDEA[ki:KR][kz:KR][oi:OR][oz:OR] =
+			(						 oinezkoa[OID].iritxi->ZEBRABIDEA[ ki ][ kz ][oi+1][ oz ]
+			|when(kz == 0 && ki < 3) oinezkoa[OID].sartu ->ZEBRABIDEA[ ki ][ kz ][oi-1][oz+1]
+			|						 oinezkoa[OID].atera ->ZEBRABIDEA[ ki ][ kz ][ oi ][oz-1]
+			|						 kotxea[KID].iritxi  ->ZEBRABIDEA[ki+1][ kz ][ oi ][ oz ]
+			|when(oz == 0 && oi == 0)kotxea[KID].sartu   ->ZEBRABIDEA[ki-1][kz+1][ oi ][ oz ]
+			|						 kotxea[KID].atera	 ->ZEBRABIDEA[ ki ][kz-1][ oi ][ oz ]
+			).
+
+||ZEBRABIDEAA = (kotxea[KID]:KOTXEA || oinezkoa[OID]:OINEZKOA || ZEBRABIDEA).

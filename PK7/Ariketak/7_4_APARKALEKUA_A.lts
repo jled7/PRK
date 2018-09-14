@@ -1,0 +1,50 @@
+/*
+ * PK7.pdf Ariketak
+ * 		3 kotxe eta 5 moto erabiltzen duten aparkaleku 
+ *		batean 10 plaza daude. Moto batek plaza bat okupatzen
+ *		du eta kotxe batek hiru plaza. Aparkalekura sartzeko
+ *		eta ateratzeko pasabide txiki bat dago. Pasabide 
+ *		horretan kotxe bakar bat egon daiteke edo bi moto 
+ *		edozein norabidean. Pasabidean sartzean ibilgailuek
+ *		ez dakite aparkalekuan plazarik dagoen edo ez.
+ *
+ *
+ *		Hausnarketa:
+ *			- Segurtasun-propietate bat bortsatzen da. Kotxeak ez daki
+ *			  barruan lekurik edukiko duen pasabidean sartzean, hortaz,
+ *			  sartzean eta lekua ez egotean kotxe bat ateratzera itxoin
+ *			  beharko du. Baino kotxe horrek ezingo du atera, itxaroten
+ *			  dagoen kotxea pasabidea oztopatzen dagoelako. Horregatik,
+ *			  kotxe bat pasabidean sartzeko begiratuko da ea barruan lekurik
+ *			  dauken hala ez.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-12-03
+ */
+
+const KK 	= 3 	// Kotxe kopurua
+range KID	= 1..KK	// Kotxeen identifikadorea
+const MK 	= 5		// Moto kopurua
+range MID	= 1..MK	// Motoen identifikadorea
+const AK	= 10	// Aparkaleku kopurua
+range AR	= 0..AK	// Aparkalekuen rangoa
+const PK	= 2		// Pasabidean egon daitezkeenen kopurua
+range PR	= 0..PK	// Pasabidean egon daitezkeenen rangoa
+
+IBILGAILUA = (iritsi->pasabideraSartuKanpotik->aparkatu->pasabideraSartuBarrutik->joan->IBILGAILUA).
+
+// [pl:AR] Zenbat Plaza dauden beteta
+// [pa:PR] Zenbat elementuekin dagoen pasabide
+APARKALEKUA = APARKALEKUA[0][0],
+APARKALEKUA[pl:AR][pa:PR] = 
+	(when (pa==0)	kotxe[KID].pasabideraSartuKanpotik 	->APARKALEKUA[ pl ][ 2  ]
+	|when (pl<=AK-3)kotxe[KID].aparkatu		   			->APARKALEKUA[pl+3][pa-2]
+	|when (pa==0)	kotxe[KID].pasabideraSartuBarrutik 	->APARKALEKUA[pl-3][ 2  ]
+	|				kotxe[KID].joan					 	->APARKALEKUA[ pl ][pa-2]
+	|when (pa<2)	motoa[MID].pasabideraSartuKanpotik 	->APARKALEKUA[ pl ][pa+1]
+	|when (pl<=AK-1)motoa[MID].aparkatu		   			->APARKALEKUA[pl+1][pa-1]
+	|when (pa<2)	motoa[MID].pasabideraSartuBarrutik 	->APARKALEKUA[pl-1][pa+1]
+	|				motoa[MID].joan						->APARKALEKUA[ pl ][pa-1]
+	).
+
+||APARKALEKUAA = (kotxe[KID]:IBILGAILUA || motoa[MID]:IBILGAILUA || APARKALEKUA).

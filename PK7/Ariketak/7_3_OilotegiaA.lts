@@ -1,0 +1,48 @@
+/*
+ * PK7.pdf Ariketak
+ * 		Josemiren oiloek oilategian jartzen dituzte arraultzak,
+ *		baina soilik sartzen dira bertara Josemi barruan ez badago.
+ *		Josemi oilategian sartzen da oilorik ez badago, bi arraultz
+ *		hartzen ditu eta ondoren ateratzen da.
+ *
+ *		Hausnarketa:
+ *			- Segurtasun propietatea bortsatzen da, josemi sartzean 2 arrautz
+ *			  edo gutxiago baldin badago ezingo ditu hartu eta elkarblokeaketa
+ *			  gertatuko da, oiloek ezin dute sartu ba gehio jartzera.
+ *			- Beste segurtasun propietate bat bortsatzen da, oiloak sartzean
+ *			  arrautz kopurua maximoa bada, edota maximora iristean beste oilo
+ *			  batzuk badaude itxoiten jartzeko barruan sartuta, elkarblokeaketa
+ *			  gertatuko da.
+ *			
+ * Egilea: Jon Led
+ * Data: 2017-11-30
+ */
+
+const OK 	= 3			// Oiloen kopurua
+range OR 	= 0..OK		// Oiloen rangoa
+range OID	= 1..OK		// Oiloen identifikadorea
+const AK 	= 5			// Arrautz kopuru maximoa
+range AR 	= 0..AK		// Arrautzen rangoa
+range Bool	= 0..1		// Ea josemi barruan dagoen ala ez {0: Josemi kanpoan, 1: Josemi barruan}
+						// Edo Sarraila bezela bi oiloek batera begira eta jarri ez dezaten
+
+JOSEMI 	= (sartu->hartu->atera->JOSEMI).
+
+OILOA   = (sartu->jarri->atera->OILOA).
+
+
+// [a:AR]	 Arrautza kopurua {0: Batez, AK: Beteta}
+// [o:OR]	 Oilo kopurua {0: Batez, OK: Beteta}
+// [j:Bool]	 Josemi barruan dagoen ala ez
+OILOTEGIA = OILOTEGIA[0][0][0],
+OILOTEGIA[a:AR][o:OR][j:Bool] =
+								(when (j==0)	oilo[OID].sartu		 ->OILOTEGIA[ a ][o+1][ j ]
+								|when (a<AK)	oilo[OID].jarri		 ->OILOTEGIA[a+1][ o ][ j ]
+								|				oilo[OID].atera		 ->OILOTEGIA[ a ][o-1][ j ]
+								|when(o==0)		josemi.sartu		 ->OILOTEGIA[ a ][ o ][ 1 ]
+								|when(a>=2)		josemi.hartu		 ->OILOTEGIA[a-2][ o ][ 1 ]
+								|				josemi.atera		 ->OILOTEGIA[ a ][ o ][ 0 ]
+								).
+
+||OILOTEGI = (josemi:JOSEMI || oilo[OID]:OILOA || OILOTEGIA).
+||OILOTEGI_PROP = OILOTEGI<<{josemi.sartu, oilo[OID].sartu}.
