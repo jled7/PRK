@@ -1,0 +1,8 @@
+/*
+ * PK6.pdf Adibidea
+ * Elkar-blokeaketaren analisia
+ *
+ * Data: 2017-11-05
+ */
+
+MUGI = (ezker->(eskubi->MUGI|ezker->STOP)).

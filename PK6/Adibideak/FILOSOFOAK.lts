@@ -1,0 +1,21 @@
+/*
+ * PK6.pdf Adibidea
+ * Filosofoen afaria - Eredua
+ *
+ * Data: 2017-11-05
+ */
+
+range Bool = 0..1
+
+FIL = (eseri->eskubi.get->ezker.get
+		 ->jan->eskubi.put->ezker.put
+		 ->altxatu->FIL).
+
+SARD = SARD[0],
+SARD[h:Bool] = (when (h==0) get->SARD[1]
+			   |			put->SARD[0]).
+
+||AFARIA(N=5)= forall [i:0..N-1] 
+	(fil[i]:FIL ||
+	{fil[i].ezker,fil[((i-1)+N)%N].eskubi}::SARD
+	).

@@ -1,0 +1,33 @@
+/* 6.2 MAIORDOMO Ariketa
+ * 
+ *	• Filosofoen afarirako beste soluzio bat: 
+ *					soilik lau filosofo eser daitezke batera.
+ *	• MAIORDOMO prozesu bat espezifikatu, proposatutako 
+ *	  ereduarekin konposatzean, gehienez lau filosofo eseri 
+ *	  ekintza egitea baimentzen duena, altxatu ekintza bat
+ *    gertatu aurretik
+ *
+ * Jon Led
+ * 07/11/17
+ */
+
+const MAX  = 4 		// Eseri daitezkeen kopuru maximoa
+range MR   = 0..MAX	// Eseri daitezkeen kopuru maximoen rangoa
+range Bool = 0..1	// Bool rangoa sardeska kontrolatzeko (hartua edo ez hartua)
+
+FIL = (eseri->eskubi.get->ezker.get->jan->eskubi.put->ezker.put->altxatu->FIL).
+
+// [h:Bool] Boolearra, sardeska hartua(h==1) edo ez hartua(h==0)
+SARD = SARD[0],
+SARD[h:Bool] = (when (h==0) get->SARD[1]
+			   |when (h==1) put->SARD[0]).
+
+// [f:MR]   Zenbat filosofo dauden exerita momentu bakoitzean
+MAIORDOMO = MAIORDOMO[0],
+MAIORDOMO[f:MR] = (when (f<MAX) eseri  -> MAIORDOMO[f+1]
+				  | 			altxatu-> MAIORDOMO[f-1]).
+
+
+||AFARIA(N=5) =	(fil[MR]::MAIORDOMO || forall [i:0..N-1]
+										   (fil[i]:FIL ||
+										   {fil[i].ezker, fil[((i-1)+N)%N].eskubi}::SARD)).

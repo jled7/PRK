@@ -1,0 +1,20 @@
+/*
+ * PK6.pdf Adibidea
+ * Elkar-blokeaketaren analisia – Nola saihestu (Orden Bera)
+ *
+ * Data: 2017-11-05
+ */
+
+P = (  printer.get->scanner.get
+	 ->kopiatu
+	 ->printer.put->scanner.put
+	 ->P).
+
+BALIABIDE = BALIABIDE[0],
+BALIABIDE[h:0..1] = (when (h==0) get->BALIABIDE[1]
+				    |when (h==1) put->BALIABIDE[0]).
+
+||SISTEMA = (p:P||q:P 
+				||{p,q}::printer:BALIABIDE
+				||{p,q}::scanner:BALIABIDE
+			).
