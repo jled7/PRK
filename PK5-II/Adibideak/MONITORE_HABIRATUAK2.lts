@@ -1,0 +1,26 @@
+/*
+ * PK5.pdf Adibidea
+ * Monitore habiratuak - buffer mugatuaren eredua II
+ *
+ * Data: 2017-10-28
+ */
+
+const Max = 5
+range Int = 0..Max
+
+BUFFER = (put -> BUFFER
+		 |get -> BUFFER
+		 ).
+
+IDAZLEA = (libreak.behera ->put->okupatuak.gora->IDAZLEA).
+IRAKURLEA = (okupatuak.behera->get->libreak.gora ->IRAKURLEA).
+
+SEMAFOROA(N=0) = SEMA[N],
+SEMA[b:Int]    = (			  gora->SEMA[b+1]
+				 |when(b>0) behera->SEMA[b-1]
+				 ).
+
+||BUFFERMUGATUA = (IDAZLEA || IRAKURLEA || BUFFER
+									||libreak:SEMAFOROA(5)
+									||okupatuak:SEMAFOROA(0)
+									)@{put,get}.

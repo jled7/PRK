@@ -1,0 +1,24 @@
+/*
+ * PK5.pdf Ariketak
+ * 		LIFO ilara batean prozesuak 
+ *		sartu eta ateratzen dira.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-28
+ */
+
+const PT  = 3 	 	// Pilaren tamaina
+range PiR = 0..PT 	// Pilaren rangoa
+const PK  = 3		// Prozesu kopurua
+range PR  = 0..PK	// Prozesuen rangoa
+
+Prozesua = (sartu[i:0..PT-1]->atera[i]->Prozesua).
+
+// [i:PiR] Pilaren egoera definitzen du, (ea zoze gehio sartzea dagoen edo atera)
+LIFO = LIFO[0],
+LIFO[i:PiR] = (           atera[i-1]->LIFO[i-1]
+			  |when(i<PT) sartu[i]  ->LIFO[i+1]
+			  )\{atera[-1]}.
+
+||LIFOO = (p[PR]:Prozesua || p[PR]::LIFO).
+

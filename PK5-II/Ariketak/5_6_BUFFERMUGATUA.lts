@@ -1,0 +1,25 @@
+/*
+ * PK5.pdf Ariketak
+ * 		Egokitu buffer mugatuaren FSP eredua
+ *		put eta get egitean, jarri eta hartu
+ *		behar den posizioa adierazteko
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-28
+ */
+
+const N = 5			// Buffer tamaina
+range NR = 0..N-1   // Bufferaren Memoria posizioa [0][1][2][3][4]
+range KR = 0..N     // Bufferaren egoera
+
+IDAZLEA   = (put[NR]->IDAZLEA).
+IRAKURLEA = (get[NR]->IRAKURLEA).
+
+// [i:KR] Bufferaren egoera, zenbat posizio erabiliak
+// [p:NR] Put egiteko memoria posizioa Adib [0][1][2][X][4]
+// [g:NR] Get egiteko memoria posizioa Adib [X][1][2][3][4]
+BUFFER = COUNT[0][0][0],
+COUNT[i:KR][p:NR][g:NR] = ( when (i<N) put[p]->COUNT[i+1][(p+1)%N][   g   ]
+				  		  | when (i>0) get[g]->COUNT[i-1][   p   ][(g+1)%N]).
+
+||BUFFERMUGATUA = (IDAZLEA || BUFFER ||IRAKURLEA).

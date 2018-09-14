@@ -1,0 +1,49 @@
+/*
+ * PK5.pdf Ariketak
+ * 		Array bateko zenbakien artean maximoa aukeratu.
+ *		FSP eredua eman, horrela soluzionatuz:
+ *		 - Zenbakiak dituen array-az gain,
+ *		   aldagai laguntzaile bat erabiliko dugu maximoa
+ *		   gordetzeko.
+ *		 - Prozesu aktiboek, konkurrenteki lanean, 
+ *		   ondokoa egiten dute:
+ *				- array-tik (hartu gabeko) zenbaki bat hartu
+ *				  eta uneko maximoa baino handiagoa bada, 
+ *				  maximoan sartu zenbaki hori.
+ *				- Jakiteko zein den array-tik hartu beharreko
+ *				  zenbakia indize bat erabiliko dugu
+ *				  eguneratzen joan beharko duguna.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-28
+ */
+
+const PK   = 3			// Prozesu Kopurua
+range PR   = 0..PK-1	// Prozesuen rangoa
+const AT   = 6			// Array-aren tamaina
+range AR   = 0..AT-1    // Array-aren rangoa (array [0][1][2][3][4][5])
+range Lock = 0..1		// Boolearra, sarraila modura
+
+Prozesua = (hartu_i->hartu_max->konparatu->gorde_max->Prozesua).
+
+
+// [block:Lock] Sarraila, batek maximoa hartzen duen bitartean beste batek ez hartzeko
+MAXIMOA 			= MAXIMOA[0],
+MAXIMOA[block:Lock] = (when(block==0)  p[PR].hartu_max->MAXIMOA[1]
+					  |				   p[PR].gorde_max->MAXIMOA[0]
+					  ).
+
+// [s:HR] Konparatzeko gelditzen diren posizioak
+ARRAY 		  = ARRAY[AT-1],
+ARRAY[s:AR]   = (when(s>0)  p[PR].hartu_i->ARRAY[s-1]
+			    |		 	i[ s ]		 ->ARRAY[ s ]
+			    ).
+
+|| ARRAY_MAXIMOA = (p[PR]:Prozesua || MAXIMOA || ARRAY).
+
+
+/* 
+ * Ez da batere eraginkorra, konparazioak ez dira konkurrenteki egiten,
+ * bata bestearen atzetik baizik. Maximoa hartu, konparatu eta gorde 
+ * ondoren bakarrik segi daiteke beste prozesu aktiboen ejekuzioa.
+*/

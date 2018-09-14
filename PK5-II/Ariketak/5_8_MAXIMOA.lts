@@ -1,0 +1,26 @@
+/*
+ * PK5.pdf Ariketak
+ * 		Array bateko zenbakien artean maximoa aukeratu.
+ *		FSP eredua eman eta Javaz inplementatu, 
+ *		agendaren eredua erabiliz.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-28
+ */
+
+const PK   = 3			// Prozesu Kopurua
+range PR   = 0..PK		// Prozesuen rangoa
+const AT   = 6			// Array-aren tamaina
+range AR   = 0..AT    	// Array-aren rangoa (array [0][1][2][3][4][5][X])
+
+Prozesua = (hartu->konparatu->sartu->Prozesua).
+
+// [i:AR] Array-aren indizea da, [i-1][i-2] kalkulatzeko erabiliko dugu
+// [p:PR] Konparatzen ari diren prozesu kopurua, bukaeran bakarra egon behar du
+AGENDA = AGENDA[AT][0],
+AGENDA[i:AR][p:PR] = (when(i>=2) p[PR].hartu->[i-1]->[i-2]					->AGENDA[i-2][p+1]
+					 |			 p[PR].sartu->if(i==0 && p==1) then (emaitza->STOP)
+															   else ([i]	->AGENDA[i+1][p-1])
+					 )\{[6]}.
+
+||AGENDA_MAX = (p[PR]:Prozesua || AGENDA).

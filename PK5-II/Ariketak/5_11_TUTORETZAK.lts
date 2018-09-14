@@ -1,0 +1,45 @@
+/*
+ * PK5.pdf Ariketak
+ * 		Konkurrenteko ikasleek azterketa garaian ikasten 
+ *		egoten dira (suposatzen da). Zerbait ez badute
+ *		ulertzen irakaslearen bulegora joaten dira, bulegoan
+ *		sartu, galdera egin eta erantzuna jaso ondoren 
+ *		bulegotik ateratzen dira, berriz ikastera joateko.
+ *
+ *		Konkurrenteko irakasleak, ikasle batek galdera bat
+ *		egiten dionean, erantzun baino lehen pentsatu egiten
+ *		du (suposatzen da). Gainera irakaslea, nahiko berezia denez,
+ *		tutoretzetarako ondoko arauak ditu:
+ *			- Bulegoan bi ikasle batera egon daitezke, baina ez gehiago.
+ * 			- Ikasle batek egin duen galdera erantzun arte, besteak ezin
+ *			  du galdetu.
+ *			- Ikasle bakoitzak galdera bakar bat egin dezake tutoretza 
+ *			  bakoitzean.
+ *			- Bulegoan sartzeko eta galdera egiteko ez da errespetatzen
+ *			  aurretik zein zegoen.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-28
+ */
+
+const IK = 5		// Ikasle kopurua
+range IR = 0..IK	// Ikasleen rango
+
+range Bool = 0..1		// Rango boolearra
+
+IKASLEA = (bulegoraSartu->galderaEgin->erantzunaJaso->bulegotikAtera->IKASLEA).
+
+IRAKASLEA = (galderaEntzun->pentsatu->galderaErantzun ->IRAKASLEA).
+
+// [s:IR] Zenbat ikasle dauden sartuta esaten
+// [eg:Bool] Ea galdera eginda dagoen
+// [er:Bool] Ea galdera erantzunda dagoen
+BULEGOA = BULEGOA[0][0][0],
+BULEGOA[s:IR][eg:Bool][er:Bool] = (when (s<2)   		 ikasle[IR].bulegoraSartu ->BULEGOA[s+1][ eg ][ er ]
+								  |when (eg==0 && er==0) ikasle[IR].galderaEgin   ->BULEGOA[ s ][eg+1][ er ]
+								  |when (eg==1) 		 irakasle.galderaEntzun   ->BULEGOA[ s ][ eg ][ er ]
+								  |when (eg==1) 		 irakasle.galderaErantzun ->BULEGOA[ s ][eg-1][er+1]
+								  |when (er==1) 		 ikasle[IR].erantzunaJaso ->BULEGOA[ s ][ eg ][er-1]
+								  |when (s>0)   		 ikasle[IR].bulegotikAtera->BULEGOA[s-1][ eg ][ er ]).
+
+||TUTORETZA = (ikasle[IR]:IKASLEA || irakasle:IRAKASLEA || BULEGOA).
