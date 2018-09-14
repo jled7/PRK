@@ -1,0 +1,10 @@
+/*
+ * PK2.pdf Adibidea
+ * Huts-egitea modelatzen
+ *
+ * Data: 2017-09-17
+ */
+
+KANALA = (in->     KANALA
+		 |in->out->KANALA
+		 ).

@@ -1,0 +1,9 @@
+/*
+ * PK2.pdf Adibidea
+ * Aukera determinista
+ *
+ * Data: 2017-09-17
+ */
+
+EDARIAK = (gorria ->kafea->EDARIAK
+		  |urdina ->tea  ->EDARIAK).

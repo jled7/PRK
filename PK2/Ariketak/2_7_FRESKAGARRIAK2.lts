@@ -1,0 +1,22 @@
+/*
+ * PK2.pdf Ariketak
+ * 2. FSP eredua eman
+ *		Freskagarrien makina. Lata batek 15 zentimo balio du. 
+ *		Makinak  onartzen ditu 5, 10 eta 20 zentimoko txanponak,
+ *		eta bueltak  ematen ditu.
+ *		(Traza posible bat: [10]->[20]->lata->buetak[15] )
+ *
+ * Egilea: Jon Led
+ * Data: 2017-09-18
+ */
+
+
+const PREZIOA	   = 15
+const N 		   = 10
+range R 		   = 0..N
+FRESKAGARRIAK 	   = FRESKAGARRIAK[0],
+FRESKAGARRIAK[i:R] = (when(i*5>=PREZIOA)	lata->bueltak[i*5-PREZIOA]->FRESKAGARRIAK[ 0 ]
+					 |											  [05]->FRESKAGARRIAK[i+1]
+					 |											  [10]->FRESKAGARRIAK[i+2]
+					 |										   	  [20]->FRESKAGARRIAK[i+4]
+					 ).

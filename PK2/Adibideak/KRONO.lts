@@ -1,0 +1,13 @@
+/*
+ * PK2.pdf Adibidea
+ * Ekintza babestuak (guarded actions)
+ *
+ * Data: 2017-09-17
+ */
+
+const N   = 3
+range R   = 0..N
+KRONO     = (hasi->KRONO[N]),
+KRONO[i:R]= (when (i>0)  tik	-> KRONO[i-1]
+			|when (i==0) alarma -> STOP
+			).

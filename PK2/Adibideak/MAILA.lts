@@ -1,0 +1,12 @@
+/*
+ * PK2.pdf Adibidea
+ * Baldintzak
+ *
+ * Data: 2017-09-17
+ */
+
+const N = 3
+range R = 0..N
+MAILA   = (maila[x:R]->
+						if(x>=2) then (altua->MAILA)
+								 else (baxua->MAILA)).

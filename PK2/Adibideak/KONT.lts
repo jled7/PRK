@@ -1,0 +1,13 @@
+/*
+ * PK2.pdf Adibidea
+ * Ekintza babestuak (guarded actions)
+ *
+ * Data: 2017-09-17
+ */
+
+const N  = 3
+range R  = 0..N
+KONT     = KONT[0],
+KONT[i:R]= ( when (i<N) gehi->KONT[i+1]
+		   | when (i>0) ken ->KONT[i-1]
+		   |			[i] ->KONT[ i ]).

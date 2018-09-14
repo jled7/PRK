@@ -1,0 +1,18 @@
+/*
+ * PK2.pdf Ariketak
+ * 2. FSP eredua eman
+ *		Igogailu bat. Gora eta behera egin dezake, 1. eta 6. pisuen artean.
+ *		(Traza posible bat:  non[4]->gora->non[5]-->gora->non[6]>behera->non[5]->...)
+ *
+ * Egilea: Jon Led
+ * Data: 2017-09-18
+ */
+
+const N = 6
+range R = 1..N
+
+IGOGAILUA = IGOGAILUA[1],
+IGOGAILUA[i:R] = (when (i<N) gora  ->IGOGAILUA[i+1]
+				 |when (i>1) behera->IGOGAILUA[i-1] 
+				 |			 non[i]->IGOGAILUA[ i ]
+				 ).

@@ -1,0 +1,9 @@
+/*
+ * PK2.pdf Adibidea
+ * Aukera ez-determinista
+ *
+ * Data: 2017-09-17
+ */
+
+LEONKASTILLO = (bota->leon    ->LEONKASTILLO
+			   |bota->kastillo->LEONKASTILLO).

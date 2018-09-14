@@ -1,0 +1,19 @@
+/*
+ * PK2.pdf Ariketak
+ * 2. FSP eredua eman
+ *		Makina batean botoi bat sakatzean 1 eta 0 balioak
+ * 		itzultzen dizkigu alternatiboki. 
+ * 		(Traza: sakatu->1->sakatu->0->sakatu->1->sakatu->0...).
+ *
+ * Egilea: Jon Led
+ * Data: 2017-09-18
+ */
+
+const N = 1
+range R = 0..1
+
+SAKATU = SAKATU[0],
+SAKATU[i:R] = (when(i==0) sakatu->SAKATU[i+1]
+			  |when(i==1) sakatu->SAKATU[i-1]
+			  |				 [i]->SAKATU[ i ]
+			  ).

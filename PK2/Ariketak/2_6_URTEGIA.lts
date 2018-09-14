@@ -1,0 +1,24 @@
+/*
+ * PK2.pdf Ariketak
+ * 2. FSP eredua eman
+ *		Urtegia. Uraren maila 0..9 artean egon behar du. 
+ *		Hasieran 5ean dago. 2 baino txikiagoa denean “gutxi”
+ *		adierazten du, eta 8 baino handiagoa denean “asko”. 
+ *		Bestela “ongi”.
+ *		(Traza posible bat: ...->ongi[7]->igo->ongi[8]->igo->asko[9]->
+ *													jeitsi->ongi[8]->...)
+ *
+ * Egilea: Jon Led
+ * Data: 2017-09-18
+ */
+
+const N = 9
+range R = 0..N
+
+URTEGIA      = URTEGIA[5],
+URTEGIA[i:R] = (when (i<N) 			igo     ->URTEGIA[i+1]
+			   |when (i>0) 			jeitsi  ->URTEGIA[i-1]
+			   |when (i<2) 			gutxi[i]->URTEGIA[ i ]
+			   |when (i>8) 			asko[i] ->URTEGIA[ i ]
+			   |when (i>=2 && i <=8)ongi[i] ->URTEGIA[ i ]
+			   ).

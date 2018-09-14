@@ -1,0 +1,17 @@
+/*
+ * PK2.pdf Ariketak
+ * 2. FSP eredua eman
+ *		Aldagai batek 0..N heinean dauden balioak gordetzen ditu 
+ *		eta irakurri eta idatzi ekintzak onartzen ditu. 
+ *		N=2 dela suposa dezakegu. 
+ *
+ * Egilea: Jon Led
+ * Data: 2017-09-18
+ */
+
+const N = 2
+range R = 0..N
+
+ALDAGAI 	 = ALDAGAI[0],
+ALDAGAI[i:R] = ( idatzi[x:R]->ALDAGAI[x]
+		  	       | irakurri[i]->ALDAGAI[i]).

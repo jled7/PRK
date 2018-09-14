@@ -1,0 +1,25 @@
+/*
+ * PK2.pdf Adibidea
+ * Java-ko harien bizi-zikloa
+ *
+ * Data: 2017-09-17
+ */
+
+THREAD 			= SORTUTA,
+SORTUTA			= (start->EGIKARITZEN
+				  |stop ->HILIK),
+
+EGIKARITZEN 	= ({suspend,sleep}->EZ_EGIKARIGARRI
+				  |yield          ->EGIKARIGARRI 
+				  |{stop,end}     ->HILIK 
+				  |run            ->EGIKARITZEN ),
+
+
+EGIKARIGARRI	= (suspend        ->EZ_EGIKARIGARRI
+				  |dispatch       ->EGIKARITZEN 
+				  |stop           ->HILIK ),
+
+EZ_EGIKARIGARRI	= (resume         ->EGIKARIGARRI 
+				  |stop           ->HILIK ),
+
+HILIK = STOP.

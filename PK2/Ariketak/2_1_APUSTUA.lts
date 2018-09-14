@@ -1,0 +1,12 @@
+/*
+ * PK2.pdf Ariketak
+ * 1. LTSak emanik FSPak lortu
+ *
+ * Egilea: Jon Led
+ * Data: 2017-09-17
+ */
+
+APUSTUA = (bat ->irabazi->APUSTUA
+		  |bi  ->irabazi->APUSTUA
+		  |hiru->galdu  ->APUSTUA
+		  ).
