@@ -1,0 +1,14 @@
+/*
+ * PK3.pdf Adibidea
+ * BAIEZ2
+ *
+ * Data: 2017-09-24
+ */
+
+BAI_IDAZLEA = (idatziBai -> BAI_IDAZLEA
+ 			  |bukatuBai -> STOP).
+
+EZ_IDAZLEA	= (idatziEz -> EZ_IDAZLEA
+			  |bukatuEz -> STOP).
+
+||BAIEZ2 = (BAI_IDAZLEA || EZ_IDAZLEA).

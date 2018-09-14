@@ -1,0 +1,11 @@
+/*
+ * PK3.pdf Adibidea
+ * BAIEZ3
+ *
+ * Data: 2017-09-24
+ */
+
+IDAZLEA = (idatzi -> IDAZLEA
+ 		  |bukatu -> STOP).
+
+||BAIEZ3 = ({bai,ez}:IDAZLEA).

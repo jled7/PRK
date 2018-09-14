@@ -1,0 +1,5 @@
+- 12.Ariketa Joku saiakera bat da. Kotxeak sahietsi behar
+  dituzu W eta S letrak, gora eta behera, erabiliz.
+- 12.Ariketari buruzko galdera:
+	- "Nondik atera duzu checkCollision idazteko ideia?"
+			Ez dakit erantzutea nahi zenuen edo ez, baino hemen duzu. AABB kolisioak ikusi nituen Bistaratzea eta Ingurune Birtualak (BiB) irakasgaiean. Oso kolisio sinpleak dira, laukizuzenen artean, eta nola Java-k Rectangle klasea duen, begiratu nuen ea bi Rectangle-ren artean bazegoen intersekziorik kalkulatzen zuen funtziorik, eta bazegoen. Ez dira oso zehatzak baino behar nuenarentzako aproposa.

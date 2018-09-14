@@ -1,0 +1,11 @@
+/*
+ * PK3.pdf Adibidea
+ * Interakzioa modelatzen (handshake)
+ *
+ * Data: 2017-09-21
+ */
+
+EGIL2 = (egin->prest->erabilita->EGIL2).
+ERAB2 = (prest->erabili->erabilita->ERAB2).
+
+||EGIL_ERAB2 = (EGIL2 || ERAB2).

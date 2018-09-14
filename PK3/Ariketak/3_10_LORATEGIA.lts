@@ -1,0 +1,22 @@
+/*
+ * PK3.pdf Ariketak
+ * 		Lorategi batean bi ate daude. Pertsona bat sartzen
+ *		den bakoitzean ate horrek kontagailu bat inkrementatzen
+ *	    du jakiteko zenbat sartu diren guztira.Pertsonak sartuko
+ *		dira lorategira beteta egon arte. Pertsonak ez dira
+ *		aterako, soilik sartu. FSP eredua.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-09-21
+ */
+
+
+const N = 8
+range R = 0..N
+
+ATEA = (sartu->ATEA).
+
+KONT 	  = KONT[0],
+KONT[i:R] = (when(i<N) sartu->KONT[i+1]).
+
+||LORATEGIA = ({a,b}:ATEA || {a,b}::KONT).

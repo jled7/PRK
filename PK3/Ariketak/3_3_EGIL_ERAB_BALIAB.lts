@@ -1,0 +1,25 @@
+/*
+ * PK3.pdf Ariketak
+ * 		ERAB_BALIAB adibidean, gehitu EGILE prozesu bat, 
+ *		"egin" egiten duena, a edo b ERABiltzaileek 
+ *		"erabili" aurretik.
+ *		Traza posiblea: egin­>b.eskuratu­>b.erabili­>
+ *		b.askatu­>egin­>b.eskuratu­>b.erabili­>b.askatu­>
+ *		egin­>a.eskuratu­>a.erabili­>a.askatu­>egin­>
+ *		b.eskuratu­>b.erabili­>...
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-17
+ */
+
+range Bool = 0..1
+ERAB			= (eskuratu->erabili->askatu->ERAB).
+EGILE			= (egin->EGILE).
+
+BALIAB					= BALIAB[0][0],
+BALIAB[i:Bool][z:Bool]  = (when(i==0 && z==1) {a,b}.eskuratu->BALIAB[1][1]
+				  		  |when(i==1 && z==1) {a,b}.askatu  ->BALIAB[0][0]
+						  |when(z==0)		  egin	  		->BALIAB[i][1]
+				  		  ).
+
+||ERAB_BALIAB = ( {a,b}:ERAB || EGILE || BALIAB).

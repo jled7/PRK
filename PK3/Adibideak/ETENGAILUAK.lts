@@ -1,0 +1,13 @@
+/*
+ * PK3.pdf Adibidea
+ * Prozesuak etiketatzea
+ *
+ * Data: 2017-09-21
+ */
+
+const N = 3
+range R = 1..N
+
+ETENGAILU = (on->off->ETENGAILU).
+
+||ETENGAILUAK = (s[i:R]:ETENGAILU).

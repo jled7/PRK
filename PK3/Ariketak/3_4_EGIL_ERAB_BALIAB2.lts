@@ -1,0 +1,31 @@
+/*
+ * PK3.pdf Ariketak
+ * 		Oraingoan 2 EGILE egongo dira, x eta y. 
+ *		Bi egileek "egin" egin beharko dute (berdin
+ * 		da zein ordenean) a edo b ERABiltzaileek 
+ *		erabili aurretik.
+ *		Traza posiblea:
+ *		y.egin­>x.egin­>b.eskuratu­>b.erabili­>
+ *		b.askatu­>x.egin­>y.egin­>b.eskuratu­>
+ *		b.erabili­>b.askatu­>x.egin­>y.egin­>
+ *		a.eskuratu­>a.erabili­> a.askatu­>y.egin­>...
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-17
+ */
+
+range Bool 	  = 0..1
+range CuatriBool = 0..3 // {x,y} = {0,0}(0), {1,0}(1), {0,1}(2), {1,1}(3)
+ERAB			= (eskuratu->erabili->askatu->ERAB).
+EGILE			= (egin->EGILE).
+
+BALIAB			= BALIAB[0][0],
+BALIAB[i:Bool][z:CuatriBool]  = (when(i==0 && z==3) {a,b}.eskuratu->BALIAB[1][3]
+				  			 	|when(i==1 && z==3) {a,b}.askatu  ->BALIAB[0][0]
+							 	|when(z==0)		 x.egin		   	  ->BALIAB[0][1]
+							 	|when(z==0)		 y.egin		   	  ->BALIAB[0][2]
+							 	|when(z==1)		 y.egin		   	  ->BALIAB[0][3]
+							 	|when(z==2)		 x.egin		   	  ->BALIAB[0][3]
+				  			 	).
+
+||ERAB_BALIAB = ( {a,b}:ERAB || {x,y}:EGILE || BALIAB).

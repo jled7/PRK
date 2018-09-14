@@ -1,0 +1,10 @@
+/*
+ * PK3.pdf Adibidea
+ * Ekintzak ezkutatzea (hiding)
+ *
+ * Data: 2017-09-24
+ */
+
+ERABILTZAILEA =
+	(eskuratu->erabili->askatu->ERABILTZAILEA)
+	\{erabili}.

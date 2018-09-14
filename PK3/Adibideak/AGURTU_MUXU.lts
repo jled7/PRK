@@ -1,0 +1,11 @@
+/*
+ * PK3.pdf Adibidea
+ * Konposizio paraleloa – ekintzen tartekatzea
+ *
+ * Data: 2017-09-21
+ */
+
+MUXU 	= (muxukatu			 ->STOP).
+AGURTU	= (pentsatu->hitzegin->STOP).
+
+||AGURTU_MUXU = (MUXU || AGURTU).

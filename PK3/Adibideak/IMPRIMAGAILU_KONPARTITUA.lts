@@ -1,0 +1,16 @@
+/*
+ * PK3.pdf Adibidea
+ * Egitura-diagramak – baliabideak konpartitzea
+ *
+ * Data: 2017-09-24
+ */
+
+ERAB = (inprimagailua.eskuratu->erabili
+							  ->inprimagailua.askatu->ERAB).
+
+BALIAB		   = BALIAB[0],
+BALIAB[i:0..1] =( when (i==0) eskuratu  -> BALIAB[1]
+				| when (i==1) askatu	-> BALIAB[0] ).
+
+||INPRIMAGAILU_KONPARTITUA = ( {a,b}:ERAB
+							 ||{a,b}::inprimagailua:BALIAB).

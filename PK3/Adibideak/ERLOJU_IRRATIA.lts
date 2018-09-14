@@ -1,0 +1,11 @@
+/*
+ * PK3.pdf Adibidea
+ * Konposizio paraleloa – ekintzen tartekatzea
+ *
+ * Data: 2017-09-21
+ */
+
+ERLOJUA = (tick->ERLOJUA).
+IRRATIA = (on->off->IRRATIA).
+
+||ERLOJU_IRRATIA = (ERLOJUA || IRRATIA).

@@ -1,0 +1,10 @@
+/*
+ * PK3.pdf Adibidea
+ * Prozesuak etiketatzea
+ *
+ * Data: 2017-09-21
+ */
+
+ETENGAILU = (on->off->ETENGAILU).
+
+||BI_ETENGAILU = (a:ETENGAILU || b:ETENGAILU).

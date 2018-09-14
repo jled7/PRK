@@ -1,0 +1,11 @@
+/*
+ * PK3.pdf Adibidea
+ * Konpartituriko ekintzak (shared actions)
+ *
+ * Data: 2017-09-21
+ */
+
+EGIL = (egin->prest->EGIL).
+ERAB = (prest->erabili->ERAB).
+
+||EGIL_ERAB=(EGIL || ERAB).
