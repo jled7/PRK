@@ -1,0 +1,34 @@
+/*
+ * PK5.pdf Ariketak
+ * 		2. Basatien festa:
+ *			- Basati bakoitzak lapiko batetik 
+ *			  misiolari-puska bat hartzen du;
+ *			  puska hori jaten bukatzean, tripazgora
+ *			  jarri eta ondoren beste bat hartzen du...
+ *			- Basati sukaldariak lapikoa hutsik dagoenean
+ *			  lapikoa betetzen du misiolari-puskekin.
+ *			- baina orain sukaldariak aldi bakoitzean 3
+ *			  puska botatzen ditu (lapikoan 3 puska baino
+ *			  gehiago sartzen dira) .
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-08
+ */
+
+const MK = 5		// Misiolari kopurua maximoa
+range MR = 0..MK	// Misiolari rangoa (0:inor->MK:beteta)
+const BK = 3		// Basati kopurua
+range BR = 1..BK	// Basatien rangoa
+
+
+BASATIA 	= (hartu->jan->tripazgora->BASATIA).
+SUKALDARIA	= (bota->SUKALDARIA).
+
+// [i:MR] Lapikoan dauden misiolari puska kopurua (hasieran 0)
+LAPIKOA 	 	= LAPIKOA[0],
+LAPIKOA[i:MR]	= (when(i<=MK-3)	s.bota	   ->LAPIKOA[i+3]
+				  |when(i>0)		b[BR].hartu->LAPIKOA[i-1]
+				  |					[i]		   ->LAPIKOA[ i ]
+				  ).
+
+||BASATIENFESTA = (b[BR]:BASATIA || s:SUKALDARIA || LAPIKOA).

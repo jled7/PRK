@@ -1,0 +1,19 @@
+/*
+ * PK5.pdf Adibidea
+ * Baldintzen sinkronizazioa: aparkalekuaren adibidea
+ *
+ * Data: 2017-10-08
+ */
+
+const Plazak = 4
+range R 	 = 0..Plazak
+
+SARRERAK = (sartu->SARRERAK).
+IRTEERAK = (irten->IRTEERAK).
+
+KONTROLATZAILEA = KONTROL[0],
+KONTROL[kop:R]  = (when(kop<Plazak) sartu->KONTROL[kop+1]
+				  |when(kop>0)		irten->KONTROL[kop-1]
+				  ).
+
+||APARKALEKUA = (SARRERAK||KONTROLATZAILEA||IRTEERAK).

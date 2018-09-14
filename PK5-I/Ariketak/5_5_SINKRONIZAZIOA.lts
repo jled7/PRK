@@ -1,0 +1,26 @@
+/*
+ * PK5.pdf Ariketak
+ * 		4. Ikasle jator batzuen pisuan gastuetarako bote bat dute.
+ *		   Norberak ahal duen heinean botean dirua sartzen du,
+ *		   eta behar duen neurrian hartu.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-12
+ */
+
+const PK = 3 		//Prozesu Kopurua
+range PE = 0..PK 	//Prozesuen estadoa (0->inor)(PK->denak)
+range PR = 1..PK	//Prozesuen rangoa
+
+PROZESUA = (iritsi->egin->irten->PROZESUA).
+
+// [s:PE] Sartutako prozesuak (Hasieran ez dago(0) prozesurik sartua)
+// [e:PE] Ekintza egindako prozesuak (Hasieran ez dago(0) prozesurik eginda)
+// [a:PE] Ateratako prozesuak (Hasieran denak(PK) daude aterata)
+KONTROLA 				   = KONTROLA[0][0][PK],
+KONTROLA[s:PE][e:PE][a:PE] = (when(s==PK) 		egin  ->KONTROLA[PK ][e+1][ 0 ]
+					   		 |when(a==PK) 		iritsi->KONTROLA[s+1][ 0 ][ PK]
+					   		 |when(e==PK)   	irten ->KONTROLA[ 0 ][ PK][a+1]
+					   		 ).
+
+||SINKRONIZAZIOA = (p[PR]:PROZESUA || p[PR]::KONTROLA). 

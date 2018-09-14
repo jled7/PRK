@@ -1,0 +1,46 @@
+/*
+ * PK5.pdf Ariketak
+ * 		3. Basatien festa:
+ *			- Basati bakoitzak lapiko batetik 
+ *			  misiolari-puska bat hartzen du;
+ *			  puska hori jaten bukatzean, tripazgora
+ *			  jarri eta ondoren beste bat hartzen du...
+ *			- Basati sukaldariak lapikoa hutsik dagoenean
+ *			  lapikoa betetzen du misiolari-puskekin.
+ *			- baina orain sukaldariak hainbat puska bota, eta
+ *			  basatiek hainbat puska hartu, eta bota edo 
+ *			  hartu aurretik, lapikoan zenbat dagoen begiratzen
+ *			  dute
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-08
+ */
+
+const MK 	= 5			// Misiolari kopurua maximoa
+range MR 	= 0..MK		// Misiolari rangoa (0:inor->MK:beteta)
+const BK 	= 3			// Basati kopurua
+range BR 	= 1..BK		// Basatien rangoa
+range Lock  = 0..1		// Sarraila, biak batera begira ez dezaten (Basatiak
+						// begiratu[0] egiten dute eta bitartean sukaldariak
+						// botatzen badu gero hartu dezake begiratu[0] egin 
+						// ondoren (hau ezin da)
+
+
+BASATIA 	= (begiratu[k:MR] ->
+					if (k>0) then (random[r:1..k] ->hartu[r]->BASATIA)
+							  else					 (askatu->BASATIA)).
+SUKALDARIA	= (begiratu[k:MR]->
+					if (k<MK) then (random[r:1..MK-k] ->bota[r]->SUKALDARIA)
+							  else						(askatu->SUKALDARIA)).
+
+// [i:MR] Lapikoan dauden misiolari puska kopurua (hasieran 0)
+// [s:Lock] Sarraila. Biak batera begiratu akzioa egin ez dezaten
+//					  (hasieran askatua edo irikita(0))
+LAPIKOA 	 			= LAPIKOA[0][0],
+LAPIKOA[i:MR][s:Lock]	= (when(i<MK)		s.bota[b:1..MK-i]	 ->LAPIKOA[i+b][0]
+				  		  |when(i>0)		b[BR].hartu[r:1..i]	 ->LAPIKOA[i-r][0]
+				  		  |when(s==0)		{b[BR],s}.begiratu[i]->LAPIKOA[ i ][1]		
+						  |					{b[BR],s}.askatu	 ->LAPIKOA[ i ][0]
+				  		  ).
+
+||BASATIENFESTA = (b[BR]:BASATIA || s:SUKALDARIA || LAPIKOA).

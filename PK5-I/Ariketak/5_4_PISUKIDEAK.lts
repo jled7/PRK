@@ -1,0 +1,36 @@
+/*
+ * PK5.pdf Ariketak
+ * 		4. Ikasle jator batzuen pisuan gastuetarako bote bat dute.
+ *		   Norberak ahal duen heinean botean dirua sartzen du,
+ *		   eta behar duen neurrian hartu.
+ *
+ * Egilea: Jon Led
+ * Data: 2017-10-10
+ */
+
+const TM 	 = 3		// Txanpon maximoak
+range TR  	 = 0..TM	// Zenbat Txanpon daude Botean
+range Aukera = 0..1		// Hartu=0 edo Bota=1
+range Lock 	 = 0..1 	// Sarraila, Utzita=0  edo Hartuta=1
+const IM	 = 3		// Ikaslea kopurua maximoa
+range IR	 = 1..IM	// Ikasle rangoa
+
+
+IKASLEA = (erabakiHartuEdoBota[a:Aukera]->
+							if(a==0) then (begiratu[b:TR]->
+									if(b>0) then (erabaki[r:1..b]->hartu[r]->IKASLEA)
+									 		else					(askatu->IKASLEA))
+							else		  (begiratu[b:TR]->
+									if(b<TM) then (erabaki[r:1..TM-b]->sartu[r]->IKASLEA)
+											 else					    (askatu->IKASLEA))).
+
+// [n:TR] Botean dauden txanpon kopurua (0:hutsik - TM:beteta) (hasieran hutsik (0))
+// [s:Lock] Sarraila, bi ikasleek batea ez dezaten botea begiratu (hasieran utzita(0))
+BOTEA 				= BOTEA[0][0],
+BOTEA[n:TR][s:Lock]	= (when(n>0) 	hartu[r:1..n]	 ->BOTEA[n-r][0]
+					  |when(n<TM)	sartu[r:1..TM-n] ->BOTEA[n+r][0]
+					  |when(s==0)	begiratu[n]  	 ->BOTEA[ n ][1]
+					  |				askatu	 	 	 ->BOTEA[ n ][0]
+					  ).
+
+||PISUKIDEAK = (i[IR]:IKASLEA || i[IR]::BOTEA).

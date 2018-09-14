@@ -1,0 +1,26 @@
+/*
+ * PK5.pdf Adibidea
+ * Basatien festa hainbat puskekin (II)
+ *
+ * Data: 2017-10-08
+ */
+
+const PK = 3       // Puska kopuru maximoa
+range PR = 0..PK   // Lapikoan egon daitekeen puska kopuruaren rangoa
+range SPR = 1..PK  // Sukaldariak bota dezakeen puska kopuruaren rangoa
+const BK = 2       // Basati kopurua
+range BR = 1..BK   // Basatien rangoa
+
+BASATIA    = ( hartu -> BASATIA ).
+SUKALDARIA = ( begiratu[k:PR] ->
+					if (k<PK) then (random[r:1..PK-k]->bota[r]->SUKALDARIA)
+							  else 								SUKALDARIA).
+
+// i: lapikoan dagoen puska kopurua
+LAPIKOA 	  = LAPIKOA[0],
+LAPIKOA[i:PR] = ( when (i<PK)   s.bota[b:1..PK-i] -> LAPIKOA[i+b]
+				| when (i>0)    b[BR].hartu	      -> LAPIKOA[i-1] 
+				| 				s.begiratu[i]	  -> LAPIKOA[ i ]
+				).
+
+||JANARIA = ( b[BR]:BASATIA || s:SUKALDARIA || LAPIKOA ).
