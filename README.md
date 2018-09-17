@@ -1,5 +1,5 @@
 # PRK
 
-Programazio Konkurrentea 2017-2018
+Programazio Konkurrentea
 
-![alt text](https://gitlab.com/jled/prk/raw/master/PK9/Asmatutakoa/image.png "Asmatutako problema")
+![alt text](https://github.com/jled7/PRK/raw/master/PK9/Asmatutakoa/image.png "Asmatutako problema")
